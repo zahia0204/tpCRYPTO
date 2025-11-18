@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Chiffrement César & Vigenère</title>
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg, #74b9ff, #a29bfe);
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .container {
+    background: white;
+    width: 400px;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    text-align: center;
+  }
+
+  h1 {
+    color: #2d3436;
+    font-size: 22px;
+    margin-bottom: 25px;
+  }
+
+  select, textarea, input {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+
+  select:focus, textarea:focus, input:focus {
+    border-color: #0984e3;
+    box-shadow: 0 0 5px rgba(9,132,227,0.3);
+  }
+
+  button {
+    background: #0984e3;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background: #74b9ff;
+    transform: scale(1.05);
+  }
+
+  #result {
+    margin-top: 20px;
+    background: #f1f2f6;
+    padding: 12px;
+    border-radius: 10px;
+    min-height: 40px;
+    word-wrap: break-word;
+    font-weight: 600;
+    color: #2d3436;
+  }
+
+  footer {
+    margin-top: 15px;
+    font-size: 12px;
+    color: #636e72;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Chiffrement Cesar & Vigenere</h1>
+
+  <select id="cipherSelect" onchange="updatePlaceholder()">
+    <option value="cesar">Cesar</option>
+    <option value="vigenere">Vigenere</option>
+  </select>
+
+  <textarea id="text" placeholder="Entrez votre texte"></textarea>
+  <input id="key" type="text" placeholder="Decalage (Cesar)">
+
+  <div>
+    <button onclick="process(true)">Chiffrer</button>
+    <button onclick="process(false)">Déchiffrer</button>
+  </div>
+
+  <div id="result"></div>
+
+
+</div>
+
+<script>
+function updatePlaceholder() {
+  const cipher = document.getElementById("cipherSelect").value;
+  const keyInput = document.getElementById("key");
+  if (cipher === "cesar") {
+    keyInput.placeholder = "Decalage (Cesar)";
+  } else {
+    keyInput.placeholder = "Clé (Vigenere)";
+  }
+}
+
+function process(isEncrypt) {
+  const cipher = document.getElementById("cipherSelect").value;
+  if (cipher === "cesar") cesar(isEncrypt);
+  else vigenere(isEncrypt);
+}
+
+
+function cesar(isEncrypt) {
+  let text = document.getElementById("text").value.toUpperCase();
+  let shift = parseInt(document.getElementById("key").value) || 0;
+  if (!isEncrypt) shift = -shift;
+  let result = "";
+  for (let c of text) {
+    if (c >= 'A' && c <= 'Z') {
+      let code = (c.charCodeAt(0) - 65 + shift + 26) % 26 + 65;
+      result += String.fromCharCode(code);
+    } else result += c;
+  }
+  document.getElementById("result").innerText = result;
+}
+
+function vigenere(isEncrypt) {
+  let text = document.getElementById("text").value.toUpperCase();
+  let key = document.getElementById("key").value.toUpperCase();
+  if (!key) { alert(" entrer une clé"); return;   
+   }
+  let result = "";
+  let j = 0;
+  for (let c of text) {
+    if (c >= 'A' && c <= 'Z') {
+      let shift = key.charCodeAt(j % key.length) - 65;
+      if (!isEncrypt) shift = -shift;
+      let code = (c.charCodeAt(0) - 65 + shift + 26) % 26 + 65;
+      result += String.fromCharCode(code);
+      j++;
+    } else result += c;
+  }
+  document.getElementById("result").innerText = result;
+}
+</script>
+
+</body>
+</html>
